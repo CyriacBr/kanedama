@@ -8,7 +8,7 @@ export class AccountsService {
   constructor(private http: HttpClient) {}
 
   findAll() {
-    return this.http.get<AccountRo>(
+    return this.http.get<AccountRo[]>(
       `https://kata.getmansa.com/accounts`,
     );
   }
