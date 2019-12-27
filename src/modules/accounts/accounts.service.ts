@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionRo } from '@kanedama/common';
+import { TransactionRo, AccountRo } from '@kanedama/common';
 import * as dayjs from 'dayjs';
 import { HttpClient } from 'common/service/http-client';
 
 @Injectable()
 export class AccountsService {
   constructor(private http: HttpClient) {}
+
+  findAll() {
+    return this.http.get<AccountRo>(
+      `https://kata.getmansa.com/accounts`,
+    );
+  }
 
   findTransactions(accountId: string, startDate: string, endDate: string) {
     return this.http.get<TransactionRo[]>(
@@ -34,7 +40,7 @@ export class AccountsService {
     );
     const endDate = dayjs(recentTransac.timestamp)
       .add(1, 'h'); // Au cas oû l'égalité est stricte côté serveur
-      
+
     const transactions = await this.findTransactions(
       accountId,
       startDate.toISOString(),
