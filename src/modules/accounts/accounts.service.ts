@@ -13,7 +13,7 @@ export class AccountsService {
     );
   }
 
-  findTransactions(accountId: string, startDate: string, endDate: string) {
+  findTransactionsByDateRange(accountId: string, startDate: string, endDate: string) {
     return this.http.get<TransactionRo[]>(
       `https://kata.getmansa.com/accounts/${accountId}/transactions?from=${startDate}&to=${endDate}`,
     );
@@ -30,18 +30,17 @@ export class AccountsService {
      * We need to find the most recent transaction first
      */
     const recentTransac = await this.findMostRecentTransaction(accountId);
-    console.log('recentTransac :', recentTransac);
     /**
-     * We then need to get all the positives transactions for the 6 months prior to ^
+     * We then need to get all the positives transactions for the x months prior
      */
     const startDate = dayjs(recentTransac.timestamp).subtract(
       monthDuration,
       'month',
     );
     const endDate = dayjs(recentTransac.timestamp)
-      .add(1, 'h'); // Au cas oû l'égalité est stricte côté serveur
+      .add(1, 'h'); // To be sure we account for the recent transac' in case there's a strict comparison check
 
-    const transactions = await this.findTransactions(
+    const transactions = await this.findTransactionsByDateRange(
       accountId,
       startDate.toISOString(),
       endDate.toISOString(),
@@ -62,7 +61,7 @@ export class AccountsService {
     if (!oldestTransac) return null;
 
     while (true) {
-      const result = await this.findTransactions(
+      const result = await this.findTransactionsByDateRange(
         accountId,
         startDate.toISOString(),
         endDate.toISOString(),
@@ -72,7 +71,7 @@ export class AccountsService {
        */
       if (result.length > 0) return result[result.length - 1];
       /**
-       * We haven't found any trasanction for this period, so we'll try for a previous year
+       * We haven't found any transaction for this period, so we'll try for a previous year
        */
       endDate = endDate.subtract(1, 'year');
       startDate = startDate.subtract(1, 'year');

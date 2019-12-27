@@ -67,7 +67,7 @@ describe('AccountsService', () => {
   describe(`'findMostRecentTransaction' should work`, () => {
     it(`by default`, async () => {
       jest
-        .spyOn(service, 'findTransactions')
+        .spyOn(service, 'findTransactionsByDateRange')
         .mockImplementation(mockFindTransactions);
       jest
         .spyOn(service, 'findOldestTransaction')
@@ -79,7 +79,7 @@ describe('AccountsService', () => {
 
     it(`when there are no transaction`, async () => {
       jest
-        .spyOn(service, 'findTransactions')
+        .spyOn(service, 'findTransactionsByDateRange')
         .mockImplementation(async () => []);
       jest
         .spyOn(service, 'findOldestTransaction')
@@ -93,7 +93,7 @@ describe('AccountsService', () => {
   describe(`'findPositiveTransactions' should work`, () => {
     it('by default', async () => {
       jest
-        .spyOn(service, 'findTransactions')
+        .spyOn(service, 'findTransactionsByDateRange')
         .mockImplementation(mockFindTransactions);
       jest
         .spyOn(service, 'findOldestTransaction')
