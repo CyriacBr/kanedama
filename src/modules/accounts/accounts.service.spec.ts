@@ -103,13 +103,17 @@ describe('AccountsService', () => {
       expect(transacs).toEqual([transactions[2], transactions[3]]);
     });
   });
-});
 
-// const dayjs = require('dayjs');
-// const date = dayjs("2015-01-01 10:00:00");
-// console.log("date.get('year')", date.get('year'));
-// console.log("date.get('month') :", date.get('month'));
-// console.log("date.get('day'): ", date.get('day'));
-// console.log("date.get('hour'): ", date.get('hour'));
-// console.log(dayjs('2014-12-01 10:00:00').isBefore(date));
-// console.log(dayjs('2015-02-01 10:00:00').isAfter(date));
+  describe(`'findAllTransactions' should work`, () => {
+    it('by default', async () => {
+      jest
+        .spyOn(service, 'findTransactionsByDateRange')
+        .mockImplementation(mockFindTransactions);
+      jest
+        .spyOn(service, 'findOldestTransaction')
+        .mockImplementation(async () => transactions[0]);
+      const transacs = await service.findAllTransactions('1');
+      expect(transacs.length).toEqual(transactions.length);
+    });
+  });
+});

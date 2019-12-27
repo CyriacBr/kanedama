@@ -8,12 +8,14 @@ export class AccountsService {
   constructor(private http: HttpClient) {}
 
   findAll() {
-    return this.http.get<AccountRo[]>(
-      `https://kata.getmansa.com/accounts`,
-    );
+    return this.http.get<AccountRo[]>(`https://kata.getmansa.com/accounts`);
   }
 
-  findTransactionsByDateRange(accountId: string, startDate: string, endDate: string) {
+  findTransactionsByDateRange(
+    accountId: string,
+    startDate: string,
+    endDate: string,
+  ) {
     return this.http.get<TransactionRo[]>(
       `https://kata.getmansa.com/accounts/${accountId}/transactions?from=${startDate}&to=${endDate}`,
     );
@@ -37,8 +39,7 @@ export class AccountsService {
       monthDuration,
       'month',
     );
-    const endDate = dayjs(recentTransac.timestamp)
-      .add(1, 'h'); // To be sure we account for the recent transac' in case there's a strict comparison check
+    const endDate = dayjs(recentTransac.timestamp).add(1, 'h'); // To be sure we account for the recent transac' in case there's a strict comparison check
 
     const transactions = await this.findTransactionsByDateRange(
       accountId,
@@ -78,5 +79,33 @@ export class AccountsService {
 
       if (endDate.isBefore(dayjs(oldestTransac.timestamp))) return null;
     }
+  }
+
+  async findAllTransactions(accountId: string) {
+    let startDate = dayjs();
+    let endDate = dayjs();
+    startDate = startDate.subtract(1, 'year');
+    startDate = startDate.subtract(1, 'day');
+
+    const oldestTransac = await this.findOldestTransaction(accountId);
+    if (!oldestTransac) return [];
+
+    let transactions: TransactionRo[] = [];
+    while (true) {
+      const result = await this.findTransactionsByDateRange(
+        accountId,
+        startDate.toISOString(),
+        endDate.toISOString(),
+      );
+      transactions = transactions.concat(result);
+      /**
+       * On to the previous period
+       */
+      endDate = endDate.subtract(1, 'year');
+      startDate = startDate.subtract(1, 'year');
+
+      if (endDate.isBefore(dayjs(oldestTransac.timestamp))) break;
+    }
+    return transactions;
   }
 }
