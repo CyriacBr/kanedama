@@ -7,7 +7,10 @@ export class HttpClient {
   async get<T>(url: string) {
     try {
       let { data, status } = await this.http.get<T>(url).toPromise();
-      if (status[0] !== '2') {
+      if (String(status)[0] !== '2') {
+        console.log('url :', url);
+        console.log('status :', status);
+        console.log('data :', data);
         throw new Error(`Bad HTTP status from foreign service`);
       } else if (!data) {
         return null;
