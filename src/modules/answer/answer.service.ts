@@ -1,7 +1,7 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { TransactionRo, AnswerDto, AccountRo } from '@kanedama/common';
-import { AccountsService } from 'modules/accounts/accounts.service';
 import * as dayjs from 'dayjs';
+import { AccountsService } from '../accounts/accounts.service';
 
 @Injectable()
 export class AnswerService {
@@ -10,8 +10,14 @@ export class AnswerService {
   async getAnswer() {
     const accounts = await this.accountsService.findAll();
     const avgIncome = await this.makeAverageIncome(accounts, 6);
+    const minMax = await this.findMinMaxBalance(accounts);
+    const hasActivity = await this.has3YearsActivity(accounts);
+
     return {
-      '6_month_average_income': avgIncome,
+      '6_month_average_income': Math.floor(avgIncome),
+      '3_years_activity': hasActivity,
+      max_balance: Math.floor(minMax.max),
+      min_balance: Math.floor(minMax.min),
     } as AnswerDto;
   }
 

@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AnswerService } from './answer.service';
-import { AccountsService } from 'modules/accounts/accounts.service';
-import { MockAccountsService } from 'modules/accounts/mockAccounts.service';
 import fixtures from '../../../test/fixtures';
 import { AnswerModule } from './answer.module';
+import { AccountsService } from '../accounts/accounts.service';
+import { MockAccountsService } from '../accounts/mockAccounts.service';
 
 describe('AnswerService', () => {
   let service: AnswerService;

@@ -9,24 +9,33 @@ const REMOTE_ENDPOINT =
 
 describe('Kanedama', () => {
   let app: NestApplication;
+  jest.setTimeout(20000);
 
-  beforeEach(() =>
-    Test.createTestingModule({
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .compile()
-      .then((testingModule: TestingModule) =>
-        testingModule.createNestApplication().init(),
-      )
-      .then(
-        (testingApplication: NestApplication) => (app = testingApplication),
-      ),
-  );
+    }).compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
 
   it('should be initialized', () =>
     expect(app).toBeInstanceOf(NestApplication));
 
   describe('GET /answer', () => {
+    // it('should respond with the correct answer', () => {
+    //   return request(app.getHttpServer())
+    //     .get('/answer')
+    //     .catch(err => {
+    //       console.error(err);
+    //       throw err;
+    //     })
+    //     .then(res => {
+    //       console.log('res :', res.body);
+    //     });
+    // });
+
     it('should respond with the correct answer', () =>
       request(app.getHttpServer())
         .get('/answer')
@@ -37,7 +46,7 @@ describe('Kanedama', () => {
             '6_month_average_income': expect.any(Number),
             min_balance: expect.any(Number),
             max_balance: expect.any(Number),
-            '3_years_activity': expect.any(Number),
+            '3_years_activity': expect.any(Boolean),
           }),
         )
         .then(({ body: applicantAnswer }) =>
@@ -49,5 +58,9 @@ describe('Kanedama', () => {
               expect(validationStatus).toMatch(/^Congratz!/),
             ),
         ));
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 });
