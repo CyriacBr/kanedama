@@ -1,6 +1,6 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
-import { HttpClient } from 'common/service/http-client';
+import { HttpClient } from '../../common/service/http-client';
 
 @Module({
   imports: [HttpModule],

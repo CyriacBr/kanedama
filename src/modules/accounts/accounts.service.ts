@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionRo, AccountRo } from '@kanedama/common';
 import * as dayjs from 'dayjs';
-import { HttpClient } from 'common/service/http-client';
+import { HttpClient } from '../../common/service/http-client';
 
 @Injectable()
 export class AccountsService {
@@ -56,8 +56,7 @@ export class AccountsService {
   async findMostRecentTransaction(accountId: string) {
     let startDate = dayjs();
     let endDate = dayjs();
-    startDate = startDate.subtract(1, 'year');
-    startDate = startDate.subtract(1, 'day');
+    startDate = startDate.subtract(365, 'day');
 
     const oldestTransac = await this.findOldestTransaction(accountId);
     /**
@@ -78,8 +77,8 @@ export class AccountsService {
       /**
        * We haven't found any transaction for this period, so we'll try for a previous year
        */
-      endDate = endDate.subtract(1, 'year');
-      startDate = startDate.subtract(1, 'year');
+      endDate = endDate.subtract(365, 'day');
+      startDate = startDate.subtract(365, 'day');
 
       if (endDate.isBefore(dayjs(oldestTransac.timestamp))) return null;
     }
@@ -88,8 +87,7 @@ export class AccountsService {
   async findAllTransactions(accountId: string) {
     let startDate = dayjs();
     let endDate = dayjs();
-    startDate = startDate.subtract(1, 'year');
-    startDate = startDate.subtract(1, 'day');
+    startDate = startDate.subtract(365, 'day');
 
     const oldestTransac = await this.findOldestTransaction(accountId);
     if (!oldestTransac) return [];
@@ -105,8 +103,8 @@ export class AccountsService {
       /**
        * On to the previous period
        */
-      endDate = endDate.subtract(1, 'year');
-      startDate = startDate.subtract(1, 'year');
+      endDate = endDate.subtract(365, 'day');
+      startDate = startDate.subtract(365, 'day');
 
       if (endDate.isBefore(dayjs(oldestTransac.timestamp))) break;
     }

@@ -10,7 +10,7 @@ export class HttpClient {
       if (String(status)[0] !== '2') {
         console.log('url :', url);
         console.log('status :', status);
-        console.log('data :', data);
+        // console.log('data :', data);
         throw new Error(`Bad HTTP status from foreign service`);
       } else if (!data) {
         return null;
