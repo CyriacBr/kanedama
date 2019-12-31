@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { TransactionRo, AccountRo } from '@kanedama/common';
 import * as dayjs from 'dayjs';
 import { HttpClient } from '../../common/service/http-client';
+import { REMOTE_ENDPOINT } from '../../common/utils';
 
 @Injectable()
 export class AccountsService {
   constructor(protected http: HttpClient) {}
 
   findAll() {
-    return this.http.get<AccountRo[]>(`https://kata.getmansa.com/accounts`);
+    return this.http.get<AccountRo[]>(`${REMOTE_ENDPOINT}/accounts`);
   }
 
   findTransactionsByDateRange(
@@ -17,17 +18,20 @@ export class AccountsService {
     endDate: string,
   ) {
     return this.http.get<TransactionRo[]>(
-      `https://kata.getmansa.com/accounts/${accountId}/transactions?from=${startDate}&to=${endDate}`,
+      `${REMOTE_ENDPOINT}/accounts/${accountId}/transactions?from=${startDate}&to=${endDate}`,
     );
   }
 
   findOldestTransaction(accountId: string) {
     return this.http.get<TransactionRo>(
-      `https://kata.getmansa.com/accounts/${accountId}/transactions`,
+      `${REMOTE_ENDPOINT}/accounts/${accountId}/transactions`,
     );
   }
 
-  async findPositiveTransactionsByPeriod(accountId: string, monthDuration: number) {
+  async findPositiveTransactionsByPeriod(
+    accountId: string,
+    monthDuration: number,
+  ) {
     /**
      * We need to find the most recent transaction first
      */
@@ -50,7 +54,9 @@ export class AccountsService {
   }
 
   async findAllPositiveTransactions(accountId: string) {
-    return (await this.findAllTransactions(accountId)).map(t => (t.amount > 0 ? t : null)).filter(t => !!t);
+    return (await this.findAllTransactions(accountId))
+      .map(t => (t.amount > 0 ? t : null))
+      .filter(t => !!t);
   }
 
   async findMostRecentTransaction(accountId: string) {

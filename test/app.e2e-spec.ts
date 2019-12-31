@@ -3,9 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-
-const REMOTE_ENDPOINT =
-  process.env.REMOTE_ENDPOINT || 'https://kata.getmansa.com';
+import { REMOTE_ENDPOINT } from '../src/common/utils';
 
 describe('Kanedama', () => {
   let app: NestApplication;
