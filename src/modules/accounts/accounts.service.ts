@@ -5,7 +5,7 @@ import { HttpClient } from 'common/service/http-client';
 
 @Injectable()
 export class AccountsService {
-  constructor(private http: HttpClient) {}
+  constructor(protected http: HttpClient) {}
 
   findAll() {
     return this.http.get<AccountRo[]>(`https://kata.getmansa.com/accounts`);
@@ -27,7 +27,7 @@ export class AccountsService {
     );
   }
 
-  async findPositiveTransactions(accountId: string, monthDuration: number) {
+  async findPositiveTransactionsByPeriod(accountId: string, monthDuration: number) {
     /**
      * We need to find the most recent transaction first
      */
@@ -47,6 +47,10 @@ export class AccountsService {
       endDate.toISOString(),
     );
     return transactions.map(t => (t.amount > 0 ? t : null)).filter(t => !!t);
+  }
+
+  async findAllPositiveTransactions(accountId: string) {
+    return (await this.findAllTransactions(accountId)).map(t => (t.amount > 0 ? t : null)).filter(t => !!t);
   }
 
   async findMostRecentTransaction(accountId: string) {
