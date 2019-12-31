@@ -28,7 +28,7 @@ describe('AccountsService', () => {
   describe(`'findMostRecentTransaction' should work`, () => {
     it(`by default`, async () => {
       const trans = await service.findMostRecentTransaction('1');
-      expect(trans).toBe(fixtures.transactions[3]);
+      expect(trans).toBe(fixtures.transactions['1'][3]);
     });
 
     it(`when there are no transaction`, async () => {
@@ -48,8 +48,8 @@ describe('AccountsService', () => {
     it('by default', async () => {
       const transacs = await service.findPositiveTransactionsByPeriod('1', 6);
       expect(transacs).toEqual([
-        fixtures.transactions[2],
-        fixtures.transactions[3],
+        fixtures.transactions['1'][2],
+        fixtures.transactions['1'][3],
       ]);
     });
   });
@@ -57,7 +57,7 @@ describe('AccountsService', () => {
   describe(`'findAllTransactions' should work`, () => {
     it('by default', async () => {
       const transacs = await service.findAllTransactions('1');
-      expect(transacs.length).toEqual(fixtures.transactions.length);
+      expect(transacs.length).toEqual(fixtures.transactions['1'].length);
     });
   });
 });

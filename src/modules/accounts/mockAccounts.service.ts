@@ -17,13 +17,13 @@ export class MockAccountsService extends AccountsService {
     startDate: string,
     endDate: string,
   ) {
-    return fixtures.transactions.filter(t => {
+    return fixtures.transactions[accountId].filter(t => {
       const date = dayjs(t.timestamp);
       return dayjs(startDate).isBefore(date) && dayjs(endDate).isAfter(date);
     });
   }
 
   async findOldestTransaction(accountId: string) {
-    return fixtures.transactions[0];
+    return fixtures.transactions[accountId][0];
   }
 }

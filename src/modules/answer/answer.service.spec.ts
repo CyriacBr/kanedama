@@ -27,24 +27,39 @@ describe('AnswerService', () => {
   });
 
   describe(`'makeAverageIncome' should work`, () => {
-    it('by default', async () => {
-      const avg = await service.makeAverageIncome(fixtures.accounts, 6);
+    it('for one account', async () => {
+      const avg = await service.makeAverageIncome([fixtures.accounts[0]], 6);
       expect(avg).toBe((80 + 50) / 3);
+    });
+    it('for all accounts', async () => {
+      const avg = await service.makeAverageIncome(fixtures.accounts, 6);
+      expect(avg).toBe((80 + 50 + 500 + 180) / 6);
     });
   });
 
   describe(`'findMinMaxBalance' should work`, () => {
-    it('by default', async () => {
-      const minMax = await service.findMinMaxBalance(fixtures.accounts);
+    it('for one account', async () => {
+      const minMax = await service.findMinMaxBalance([fixtures.accounts[0]]);
       expect(minMax).toEqual({
         min: 300,
         max: 430,
       });
     });
+    it('for all accounts', async () => {
+      const minMax = await service.findMinMaxBalance(fixtures.accounts);
+      expect(minMax).toEqual({
+        min: 200,
+        max: 1010,
+      });
+    });
   });
 
   describe(`'has3YearsActivity' should work`, () => {
-    it('by default', async () => {
+    it('for one account', async () => {
+      const result = await service.has3YearsActivity([fixtures.accounts[1]]);
+      expect(result).toEqual(false);
+    });
+    it('for all accounts', async () => {
       const result = await service.has3YearsActivity(fixtures.accounts);
       expect(result).toEqual(true);
     });
