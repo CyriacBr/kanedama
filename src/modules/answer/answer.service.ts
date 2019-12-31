@@ -1,12 +1,11 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { TransactionRo, AnswerDto, AccountRo } from '@kanedama/common';
 import { AccountsService } from 'modules/accounts/accounts.service';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AnswerService {
-  constructor(
-    public accountsService: AccountsService,
-  ) {}
+  constructor(public accountsService: AccountsService) {}
 
   async getAnswer() {
     const accounts = await this.accountsService.findAll();
@@ -43,5 +42,59 @@ export class AnswerService {
     );
     const sum = transactions.reduce((acc, v) => (acc += v.amount), 0);
     return sum / allTransactions.length;
+  }
+
+  async findMinMaxBalance(accounts: AccountRo[]) {
+    let transactions: TransactionRo[] = [];
+    for (const account of accounts) {
+      const result = await this.accountsService.findAllTransactions(
+        account.account_id,
+      );
+      transactions = transactions.concat(result);
+    }
+    transactions = transactions.sort((a, b) =>
+      dayjs(a.timestamp).isBefore(dayjs(b.timestamp)) ? -1 : 1,
+    );
+
+    let min = Infinity;
+    let max = 0;
+    let balance = 0;
+    for (const trans of transactions) {
+      balance += trans.amount;
+      if (balance > max) {
+        max = balance;
+      }
+      if (balance < min) {
+        min = balance;
+      }
+    }
+    return {
+      min,
+      max,
+    };
+  }
+
+  async has3YearsActivity(accounts: AccountRo[]) {
+    let oldTransactions: TransactionRo[] = [];
+    let recentTransactions: TransactionRo[] = [];
+    for (const account of accounts) {
+      oldTransactions = oldTransactions.concat(
+        await this.accountsService.findOldestTransaction(account.account_id),
+      );
+      recentTransactions = recentTransactions.concat(
+        await this.accountsService.findMostRecentTransaction(
+          account.account_id,
+        ),
+      );
+    }
+
+    let oldest = oldTransactions.sort((a, b) =>
+      dayjs(a.timestamp).isBefore(dayjs(b.timestamp)) ? -1 : 1,
+    )[0];
+    let recent = recentTransactions.sort((a, b) =>
+      dayjs(a.timestamp).isBefore(dayjs(b.timestamp)) ? 1 : -1,
+    )[0];
+
+    return dayjs(recent.timestamp).diff(dayjs(oldest.timestamp), 'y') >= 3;
   }
 }

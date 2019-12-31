@@ -32,4 +32,21 @@ describe('AnswerService', () => {
       expect(avg).toBe((80 + 50) / 3);
     });
   });
+
+  describe(`'findMinMaxBalance' should work`, () => {
+    it('by default', async () => {
+      const minMax = await service.findMinMaxBalance(fixtures.accounts);
+      expect(minMax).toEqual({
+        min: 300,
+        max: 430,
+      });
+    });
+  });
+
+  describe(`'has3YearsActivity' should work`, () => {
+    it('by default', async () => {
+      const result = await service.has3YearsActivity(fixtures.accounts);
+      expect(result).toEqual(true);
+    });
+  });
 });
