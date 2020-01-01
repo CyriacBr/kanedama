@@ -53,7 +53,7 @@ export class AnswerService {
       dayjs(a.timestamp).isBefore(dayjs(b.timestamp)) ? -1 : 1,
     );
 
-    let min = Infinity;
+    let min = 0;
     let max = 0;
     let balance = 0;
     for (const trans of transactions) {

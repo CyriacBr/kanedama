@@ -41,14 +41,14 @@ describe('AnswerService', () => {
     it('for one account', async () => {
       const minMax = await service.findMinMaxBalance([fixtures.accounts[0]]);
       expect(minMax).toEqual({
-        min: 300,
+        min: 0,
         max: 430,
       });
     });
     it('for all accounts', async () => {
       const minMax = await service.findMinMaxBalance(fixtures.accounts);
       expect(minMax).toEqual({
-        min: 200,
+        min: 0,
         max: 1010,
       });
     });
