@@ -29,11 +29,11 @@ describe('AnswerService', () => {
   describe(`'makeAverageIncome' should work`, () => {
     it('for one account', async () => {
       const avg = await service.makeAverageIncome([fixtures.accounts[0]], 6);
-      expect(avg).toBe((80 + 50) / 3);
+      expect(avg).toBe((80 + 50) / 2);
     });
     it('for all accounts', async () => {
       const avg = await service.makeAverageIncome(fixtures.accounts, 6);
-      expect(avg).toBe((80 + 50 + 500 + 180) / 6);
+      expect(avg).toBe((80 + 50 + 500 + 180) / 4);
     });
   });
 
